@@ -19,8 +19,8 @@ c.NotebookApp.ip = '*'
 c.NotebookApp.port = 8888
 c.NotebookApp.open_browser = False
 c.MultiKernelManager.default_kernel_name = 'python3'
-
+c.NotebookApp.password = u'sha1:643c76fe1e0a:fe74543da162af73d791a2ae1acf0bc392be6dd5'
 # sets a password if PASSWORD is set in the environment
-if 'PASSWORD' in os.environ:
-    c.NotebookApp.password = passwd(os.environ['PASSWORD'])
-    del os.environ['PASSWORD']
+#if 'PASSWORD' in os.environ:
+#    c.NotebookApp.password = passwd(os.environ['PASSWORD'])
+#    del os.environ['PASSWORD']
