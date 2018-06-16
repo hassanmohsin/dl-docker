@@ -1,11 +1,8 @@
 From nvidia/cuda:9.1-cudnn7-runtime-ubuntu16.04
 
-# $ docker build . -t continuumio/anaconda:latest -t continuumio/anaconda:5.2.0 -t continuumio/anaconda2:latest -t continuumio/anaconda2:5.2.0 
-# $ docker run --rm -it continuumio/anaconda2:latest /bin/bash 
-# $ docker push continuumio/anaconda:latest 
-# $ docker push continuumio/anaconda:5.2.0 
-# $ docker push continuumio/anaconda2:latest 
-# $ docker push continuumio/anaconda2:5.2.0
+# $ docker build . -t hassanmohsin/dl-docker 
+# $ docker run --rm -it hassanmohsin/dl-docker:latest /bin/bash 
+# $ docker push hassanmohsin/dl-docker:latest
 
 MAINTAINER Md Mahmudulla Hassan <mhassan@miners.utep.edu>
 
@@ -33,13 +30,6 @@ RUN pip --no-cache-dir install tensorflow-gpu
 
 # Install Keras
 RUN pip --no-cache-dir install keras
-
-#RUN apt-get install -y curl grep sed dpkg && \ 
-#	TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \ 
-#	curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \ 
-#	dpkg -i tini.deb && \ 
-#	rm tini.deb && \ 
-#	apt-get clean 
 
 # Set up notebook config
 COPY jupyter_notebook_config.py /root/.jupyter/
