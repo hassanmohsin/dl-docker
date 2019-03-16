@@ -1,44 +1,74 @@
-From nvidia/cuda:9.1-cudnn7-runtime-ubuntu16.04
+ARG IMAGE_NAME='nvidia/cuda'
+FROM ${IMAGE_NAME}:9.1-runtime-ubuntu16.04
+LABEL maintainer "MAHMUDULLA HASSAN <hassan.mahmudulla@gmail.com>"
 
-# $ docker build . -t hassanmohsin/dl-docker 
-# $ docker run --rm -it hassanmohsin/dl-docker:latest /bin/bash 
-# $ docker push hassanmohsin/dl-docker:latest
+ARG TENSORFLOW_VERSION=1.12
+ARG CUDA_TOOLKIT_VERSION=9.2
+ARG CONDA_VERSION=4.5.12
 
-MAINTAINER Md Mahmudulla Hassan <mhassan@miners.utep.edu>
+#ENV CUDNN_VERSION 7.4.2.24
+#LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
 
-#ARG TENSORFLOW_VERSION=1.9.0
-#ARG TENSORFLOW_ARCH=gpu
-#ARG KERAS_VERSION=2.2.0
+#RUN apt-get update && apt-get install -y --no-install-recommends \
+#            libcudnn7=$CUDNN_VERSION-1+cuda9.2 && \
+#    apt-mark hold libcudnn7 && \
+#    rm -rf /var/lib/apt/lists/*
+	
+	
+# Updating Ubuntu packages
+RUN apt-get update && yes|apt-get upgrade
+RUN apt-get install -y emacs
 
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 
-ENV PATH /opt/conda/bin:$PATH 
+# Adding wget and bzip2
+RUN apt-get install -y wget bzip2
 
+# Add sudo
+RUN apt-get -y install sudo
 
-RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificates \ 
-	libglib2.0-0 libxext6 libsm6 libxrender1 \ 
-	git mercurial subversion 
+# Add user ubuntu with no password, add to sudo group
+RUN adduser --disabled-password --gecos '' ubuntu
+RUN adduser ubuntu sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+USER ubuntu
+WORKDIR /home/ubuntu/
+RUN chmod a+rwx /home/ubuntu/
+#RUN echo `pwd`
 
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.2.0-Linux-x86_64.sh -O ~/anaconda.sh && \ 
-	/bin/bash ~/anaconda.sh -b -p /opt/conda && \ 
-	rm ~/anaconda.sh && \ 
-	ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \ 
-	echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \ 
-	echo "conda activate base" >> ~/.bashrc 
+# Miniconda installing
+RUN wget https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
+RUN bash Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -b 
+RUN rm Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 
-# Install Tensorflow
-RUN pip --no-cache-dir install tensorflow-gpu
+# Anaconda installing
+#RUN wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh
+#RUN bash Anaconda3-2018.12-Linux-x86_64.sh -b
+#RUN rm Anaconda3-2018.12-Linux-x86_64.sh
 
-# Install Keras
-RUN pip --no-cache-dir install keras
+# Set path to conda
+ENV PATH /home/ubuntu/miniconda3/bin:$PATH
+#ENV PATH /root/anaconda3/bin:$PATH
+#ENV PATH /home/ubuntu/anaconda3/bin:$PATH
 
-# Set up notebook config
-COPY jupyter_notebook_config.py /root/.jupyter/
+# Updating Anaconda packages
+RUN conda update conda
+#RUN conda update anaconda
+RUN conda update --all
 
-# Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
-COPY run_jupyter.sh /root/
+# Install tensorflow and keras
+RUN conda install tensorflow-gpu=${TENSORFLOW_VERSION} cudatoolkit=${CUDA_TOOLKIT_VERSION}
+RUN conda install keras
 
-# Expose Ports for TensorBoard (6006), Ipython (8888)
-EXPOSE 6006 8888
+# Install some other python modules
+RUN pip install tqdm jupyter
 
-WORKDIR "/root"
-CMD [ "/bin/bash" ]
+# Configuring access to Jupyter
+#RUN mkdir /home/notebooks
+RUN jupyter notebook --generate-config --allow-root
+# Notebook password is 'root'
+RUN echo "c.NotebookApp.password = u'sha1:6a3f528eec40:6e896b6e4828f525a6e20e5411cd1c8075d68619'" >> /home/ubuntu/.jupyter/jupyter_notebook_config.py
+
+# Jupyter listens port: 8888 and Tensorboard 6006
+EXPOSE 8888 6006
+
+# Run Jupytewr notebook as Docker main process
+CMD ["jupyter", "notebook", "--allow-root", "--notebook-dir=/home/notebooks", "--ip='*'", "--port=8888", "--no-browser"]
