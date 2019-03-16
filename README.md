@@ -8,6 +8,7 @@ Docker image for Deep Learning
 * Keras  latest
 
 ## Installation
+* Install docker-ce by following the instructions here: ```https://docs.docker.com/install/linux/docker-ce/ubuntu/```
 * Clone this repository 
 ```
 git clone https://github.com/hassanmohsin/dl-docker.git
