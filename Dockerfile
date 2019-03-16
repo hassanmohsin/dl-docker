@@ -1,11 +1,12 @@
 ARG IMAGE_NAME='nvidia/cuda'
-FROM ${IMAGE_NAME}:9.1-runtime-ubuntu16.04
+ARG CUDA_TOOLKIT_VERSION=9.2
+
+FROM ${IMAGE_NAME}:${CUDA_TOOLKIT_VERSION}-runtime-ubuntu16.04
 LABEL maintainer "MAHMUDULLA HASSAN <hassan.mahmudulla@gmail.com>"
 
+ARG ARCH='gpu'
 ARG TENSORFLOW_VERSION=1.12
-ARG CUDA_TOOLKIT_VERSION=9.2
-ARG CONDA_VERSION=4.5.12
-
+ARG CONDA_VERSION='4.5.12'
 #ENV CUDNN_VERSION 7.4.2.24
 #LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
 
@@ -55,11 +56,11 @@ RUN conda update conda
 RUN conda update --all
 
 # Install tensorflow and keras
-RUN conda install tensorflow-gpu=${TENSORFLOW_VERSION} cudatoolkit=${CUDA_TOOLKIT_VERSION}
+RUN conda install tensorflow-${ARCH}=${TENSORFLOW_VERSION} cudatoolkit=${CUDA_TOOLKIT_VERSION}
 RUN conda install keras
 
 # Install some other python modules
-RUN pip install tqdm jupyter
+RUN pip install jupyter
 
 # Configuring access to Jupyter
 #RUN mkdir /home/notebooks
