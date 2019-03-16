@@ -24,9 +24,9 @@ docker run -it --rm -v `pwd`:`pwd` -w `pwd` --runtime=nvidia hassanmohsin/dl:gpu
 ```
 - ```-i``` (interactive) flag to keep stdin open and ```-t``` to allocate a terminal
 - ```--rm``` to remove the container after executing the script
-- ```-v `pwd`:`pwd` ```` to mount the current working directory to the container with the same path
+- ```-v `pwd`:`pwd` ``` to mount the current working directory to the container with the same path
 - ```-w `pwd``` to get the working the directory inside the container
-- ```--runtime=nvidia ```` to activate the nvidia runtime
+- ```--runtime=nvidia ``` to activate the nvidia runtime
 
 ## Running Jupyter Notebook
 
