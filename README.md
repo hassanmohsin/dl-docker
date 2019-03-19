@@ -1,24 +1,36 @@
 # dl-docker
 Docker image for Deep Learning
 
+## Pre-requisites
+
+* Docker-CE: Install docker-ce by following the instructions here: ```https://docs.docker.com/install/linux/docker-ce/ubuntu/```
+* NVIDIA runtime: Run the setup file (Ubuntu/Centos7) from this repository.
+
 ## Installed libraries
 * CUDA Toolkit 9.2
-* CUDNN Library 
+* CUDNN Library 7.3.1
 * Tensorflow 1.12
 * Keras  latest
 
 ## Installation
-* Install docker-ce by following the instructions here: ```https://docs.docker.com/install/linux/docker-ce/ubuntu/```
+### Using Dockerfile
 * Clone this repository 
 ```
 git clone https://github.com/hassanmohsin/dl-docker.git
 cd dl-docker
 ````
-* Run the setup file (Ubuntu/Centos7) to set up nvidia runtime
 * Run the Dockerfile to create an image 
 ```
-docker build -t hassanmohsin/dl:gpu .
+docker build -t hassanmohsin/dl-docker:gpu .
 ```
+
+### Using Docker Hub
+* Pull the docker image from the Docker HUB
+```
+docker pull hassanmohisn/dl-docker:gpu
+```
+
+## Running docker image
 * Test the image by running the test script (```benchmark.py```)
 ```
 docker run -it --rm -v `pwd`:`pwd` -w `pwd` --runtime=nvidia hassanmohsin/dl:gpu python benchmark.py gpu 20000
