@@ -44,7 +44,7 @@ docker run -it --rm -v `pwd`:`pwd` -w `pwd` --runtime=nvidia hassanmohsin/dl:gpu
 ## Running Jupyter Notebook
 
 ```
-docker run -it --rm --runtime=nvidia -p 8888:8888 hassanmohsin/dl:gpu
+docker run -it --rm --runtime=nvidia -p 8888:8888 hassanmohsin/dl-docker:gpu
 ```
 
 This command is to listen to the port 8888 of the docker and forwarding that port through SSH.
